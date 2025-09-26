@@ -7,6 +7,8 @@ const logMessages = ref([]);
 const progress = ref(0);
 const outputFormat = ref('mp4');
 
+const outputOptions = ['mp4', 'avi', 'mov', 'webm'];
+
 watch(
   () => outputFormat.value,
   (newValue) => {
@@ -69,29 +71,46 @@ async function convertVideo() {
 </script>
 
 <template>
-  <div>
-    <h1>Простой видеоконвертер</h1>
+  <v-container style="width:800px;height:650px">
+    <v-card class="pa-4 text-center">
+      <div class="d-flex justify-center">
+        <v-icon color="primary" size="32" class="mb-2">mdi-video</v-icon>
+        <h1 class="text-h4 font-weight-bold primary--text ms-4">Видеоконвертер</h1>
+      </div>
+      <p class="text-body-1 text--secondary mt-2">Простое преобразование видео в различные форматы</p>
+    </v-card>
 
-    <div>
-      <button @click="selectFile" :disabled="isConverting">
-        {{ selectedFile ? "Файл выбран" : "Выбрать видеофайл" }}
-      </button>
+    <v-form class="mt-8">
+      <v-row>
+        <v-col cols="4">
+           <v-btn @click="selectFile" :disabled="isConverting">
+              {{ selectedFile ? "Файл выбран" : "Выбрать видеофайл" }}
+            </v-btn>
+        </v-col>
+        <v-col cols="4">
+          <v-select label="Формат" :items="outputOptions" v-model="outputFormat" :disabled="isConverting || !selectedFile">
+          </v-select>
+        </v-col>
+        <v-col cols="4">
+          <v-btn @click="convertVideo" :disabled="isConverting || !selectedFile">Конвертировать</v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
 
-      <select v-model="outputFormat" :disabled="isConverting || !selectedFile">
-        <option value="mp4">MP4</option>
-        <option value="avi">AVI</option>
-        <option value="mov">MOV</option>
-        <option value="webm">WebM</option>
-      </select>
-
-      <button type="button" @click="convertVideo" :disabled="isConverting || !selectedFile">Конвертировать</button>
-    </div>
-
-    <div v-if="logMessages.length">
-      <h3>Лог</h3>
+    <v-card class="pa-4 mt-8" v-if="logMessages.length">
+      <div class="d-flex">
+        <v-icon size="32" class="mb-2">mdi-format-list-bulleted</v-icon>
+        <h1 class="text-h6 font-weight-bold primary--text ms-4">Лог</h1>
+      </div>
       <div v-for="(message, index) in logMessages" :key="index">
         {{ message.message }}
       </div>
-    </div>
-  </div>
+    </v-card>
+  </v-container>
 </template>
+
+<style>
+html, body {
+  overflow: hidden;
+}
+</style>
